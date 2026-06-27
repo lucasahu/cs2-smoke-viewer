@@ -38,6 +38,7 @@ export const mirage: GameMap = {
       lineups: [
         {
           id: 'a-ct-from-tramp',
+          side: 'T',
           name: 'From T ramp',
           throwPosition: [-300, 0, 1400],
           technique: 'jumpthrow',

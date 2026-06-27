@@ -6,6 +6,7 @@ import { useViewer } from '../state/store'
  */
 export function InstructionPanel() {
   const map = useViewer((s) => s.map())
+  const side = useViewer((s) => s.side)
   const selectedSpot = useViewer((s) => s.selectedSpot())
   const selectedLineup = useViewer((s) => s.selectedLineup())
   const selectSpot = useViewer((s) => s.selectSpot)
@@ -15,10 +16,14 @@ export function InstructionPanel() {
     return (
       <aside className="panel">
         <h2>{map.name}</h2>
-        <p className="hint">Click a smoke spot on the map to see lineups.</p>
+        <p className="hint">
+          {side} side — click a smoke spot on the map to see lineups.
+        </p>
       </aside>
     )
   }
+
+  const lineups = selectedSpot.lineups.filter((l) => l.side === side)
 
   if (!selectedLineup) {
     return (
@@ -27,11 +32,11 @@ export function InstructionPanel() {
           ← All spots
         </button>
         <h2>{selectedSpot.name}</h2>
-        {selectedSpot.lineups.length === 0 ? (
-          <p className="hint">No lineups yet for this spot.</p>
+        {lineups.length === 0 ? (
+          <p className="hint">No {side}-side lineups for this spot yet.</p>
         ) : (
           <ul className="lineup-list">
-            {selectedSpot.lineups.map((l) => (
+            {lineups.map((l) => (
               <li key={l.id}>
                 <button onClick={() => selectLineup(l.id)}>
                   <span>{l.name ?? l.technique}</span>

@@ -36,6 +36,49 @@ body,
   background: var(--panel);
 }
 
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* T/CT side switch */
+.side-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: #0b0e13;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.side-opt {
+  min-width: 46px;
+  padding: 5px 16px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.side-opt:hover {
+  color: var(--text);
+}
+
+.side-opt.active.t {
+  background: #e8a13a; /* T orange */
+  color: #1a1205;
+}
+
+.side-opt.active.ct {
+  background: #5a9fe0; /* CT blue */
+  color: #06121f;
+}
+
 .brand {
   font-weight: 600;
   letter-spacing: 0.02em;

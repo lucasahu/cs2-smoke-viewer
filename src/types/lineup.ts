@@ -24,9 +24,14 @@ export type ThrowInput =
   | 'right' // lob / underhand
   | 'both' // short throw
 
+/** Which side executes the lineup (drives the T/CT filter). */
+export type Side = 'T' | 'CT'
+
 /** A single way to land a given smoke: where you stand and how you throw. */
 export interface Lineup {
   id: string
+  /** Which side runs this lineup; the T/CT switch filters on it. */
+  side: Side
   /** Optional short label, e.g. "From T spawn" or "One-way". */
   name?: string
   /** Where the player stands to throw from. */

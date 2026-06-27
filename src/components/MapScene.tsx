@@ -11,6 +11,7 @@ const round = (n: number) => Math.round(n * 100) / 100
 /** The 3D viewport: map geometry, smoke spots, and (when selected) lineups. */
 export function MapScene() {
   const map = useViewer((s) => s.map())
+  const side = useViewer((s) => s.side)
   const selectedSpotId = useViewer((s) => s.selectedSpotId)
   const selectedLineupId = useViewer((s) => s.selectedLineupId)
   const authorMode = useViewer((s) => s.authorMode)
@@ -20,6 +21,15 @@ export function MapScene() {
 
   const selectedSpot = map.spots.find((s) => s.id === selectedSpotId) ?? null
   const markerScale = map.markerScale ?? 1
+
+  // Only show spots that have a lineup on the active side, and only that
+  // side's lineups within the selected spot.
+  const visibleSpots = map.spots.filter((s) =>
+    s.lineups.some((l) => l.side === side),
+  )
+  const visibleLineups = selectedSpot
+    ? selectedSpot.lineups.filter((l) => l.side === side)
+    : []
 
   const handleSurfaceClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
@@ -39,7 +49,7 @@ export function MapScene() {
       <MapModel onSurfaceClick={handleSurfaceClick} />
 
       {/* Smoke landing spots: collapse to just the selected one once drilled in. */}
-      {(selectedSpot ? [selectedSpot] : map.spots).map((spot) => (
+      {(selectedSpot ? [selectedSpot] : visibleSpots).map((spot) => (
         <SmokeSpotMarker
           key={spot.id}
           spot={spot}
@@ -49,8 +59,8 @@ export function MapScene() {
         />
       ))}
 
-      {/* Throw positions for the selected spot. */}
-      {selectedSpot?.lineups.map((lineup) => (
+      {/* Throw positions for the selected spot (active side only). */}
+      {visibleLineups.map((lineup) => (
         <LineupMarker
           key={lineup.id}
           lineup={lineup}

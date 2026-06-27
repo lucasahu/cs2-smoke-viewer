@@ -1,12 +1,16 @@
 import { AuthorPanel } from './authoring/AuthorPanel'
 import { InstructionPanel } from './components/InstructionPanel'
 import { MapScene } from './components/MapScene'
+import { SideToggle } from './components/SideToggle'
 
 export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        <span className="brand">CS2 Smoke Viewer</span>
+        <div className="topbar-left">
+          <span className="brand">CS2 Smoke Viewer</span>
+          <SideToggle />
+        </div>
         <AuthorPanel />
       </header>
       <main className="layout">
