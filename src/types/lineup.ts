@@ -64,12 +64,40 @@ export interface CameraPreset {
   target: Vec3
 }
 
+/**
+ * A 2D radar/overview image used as a flat stand-in for real 3D geometry.
+ *
+ * The numbers come straight from the map's CS2 overview file
+ * (`pos_x`, `pos_y`, `scale`), so the plane is laid out in real game world
+ * units — coordinates captured on it stay meaningful after migrating to the
+ * decompiled `.glb`.
+ */
+export interface RadarSource {
+  /** Image path under /public/radar, e.g. "mirage.png". */
+  image: string
+  /** Overview `pos_x`: world X at the image's left edge. */
+  posX: number
+  /** Overview `pos_y`: world Y at the image's top edge. */
+  posY: number
+  /** Overview `scale`: world units per pixel of the 1024px reference shot. */
+  scale: number
+  /** CS2 reference screenshot size in px (normally 1024). */
+  overviewSizePx: number
+}
+
 export interface GameMap {
   id: string
   /** Display name, e.g. "Mirage". */
   name: string
-  /** Path under /public/models, e.g. "mirage.glb". */
-  modelPath: string
+  /**
+   * Decompiled 3D geometry under /public/models, e.g. "mirage.glb".
+   * Takes priority over `radar` when set — this is the migration target.
+   */
+  modelPath?: string
+  /** 2D radar fallback used until real geometry is available. */
+  radar?: RadarSource
+  /** Uniform size multiplier for spot/lineup markers (large for radar scale). */
+  markerScale?: number
   /** Default camera framing when the map loads. */
   defaultCamera: CameraPreset
   spots: SmokeSpot[]

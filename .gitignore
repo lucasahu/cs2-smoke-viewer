@@ -19,5 +19,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# Large decompiled source assets (keep only the optimized .glb in public/models)
+# Large decompiled source assets
 /assets-raw
+
+# Valve game assets — kept local only (repo is public; licensing).
+/public/models
+/public/radar
+/public/instructions

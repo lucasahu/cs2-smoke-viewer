@@ -5,6 +5,8 @@ interface SmokeSpotMarkerProps {
   spot: SmokeSpot
   selected: boolean
   onSelect: () => void
+  /** Uniform marker size (scales geometry + label offset, not the position). */
+  scale?: number
 }
 
 /** A clickable smoke landing target floating over its world position. */
@@ -12,9 +14,10 @@ export function SmokeSpotMarker({
   spot,
   selected,
   onSelect,
+  scale = 1,
 }: SmokeSpotMarkerProps) {
   return (
-    <group position={spot.landingPosition}>
+    <group position={spot.landingPosition} scale={scale}>
       <mesh
         onClick={(e) => {
           e.stopPropagation()

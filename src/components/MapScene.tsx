@@ -19,6 +19,7 @@ export function MapScene() {
   const capturePoint = useViewer((s) => s.capturePoint)
 
   const selectedSpot = map.spots.find((s) => s.id === selectedSpotId) ?? null
+  const markerScale = map.markerScale ?? 1
 
   const handleSurfaceClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
@@ -28,7 +29,9 @@ export function MapScene() {
   }
 
   return (
-    <Canvas camera={{ position: map.defaultCamera.position, fov: 50 }}>
+    <Canvas
+      camera={{ position: map.defaultCamera.position, fov: 50, near: 1, far: 20000 }}
+    >
       <color attach="background" args={['#0e1116']} />
       <ambientLight intensity={0.6} />
       <directionalLight position={[20, 40, 20]} intensity={1.2} />
@@ -42,6 +45,7 @@ export function MapScene() {
           spot={spot}
           selected={spot.id === selectedSpotId}
           onSelect={() => selectSpot(spot.id)}
+          scale={markerScale}
         />
       ))}
 
@@ -52,6 +56,7 @@ export function MapScene() {
           lineup={lineup}
           selected={lineup.id === selectedLineupId}
           onSelect={() => selectLineup(lineup.id)}
+          scale={markerScale}
         />
       ))}
 

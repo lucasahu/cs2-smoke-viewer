@@ -5,12 +5,19 @@ interface LineupMarkerProps {
   lineup: Lineup
   selected: boolean
   onSelect: () => void
+  /** Uniform marker size (scales geometry + label offset, not the position). */
+  scale?: number
 }
 
 /** A throw-position marker, shown once a smoke spot is selected. */
-export function LineupMarker({ lineup, selected, onSelect }: LineupMarkerProps) {
+export function LineupMarker({
+  lineup,
+  selected,
+  onSelect,
+  scale = 1,
+}: LineupMarkerProps) {
   return (
-    <group position={lineup.throwPosition}>
+    <group position={lineup.throwPosition} scale={scale}>
       <mesh
         onClick={(e) => {
           e.stopPropagation()
