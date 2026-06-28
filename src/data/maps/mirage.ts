@@ -48,6 +48,17 @@ export const mirage: GameMap = {
             "Stand on T ramp, line your crosshair on the antenna tip, jumpthrow.",
           tags: ["default", "fast"],
         },
+        {
+          id: "window-instant-1",
+          side: "T",
+          name: "Instant window smoke #1",
+          throwPosition: [1300, 0, 100],
+          technique: "jumpthrow",
+          input: "left",
+          instructionImage: "mirage/window-instant-1.jpg",
+          instructionText: "aim as shown, jumpthrow",
+          tags: ["instant", "fast"],
+        },
       ],
     },
     {
