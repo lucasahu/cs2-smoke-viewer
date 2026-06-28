@@ -1,4 +1,5 @@
 import { Html } from '@react-three/drei'
+import { useViewer } from '../state/store'
 import type { Lineup } from '../types/lineup'
 
 interface LineupMarkerProps {
@@ -12,8 +13,7 @@ interface LineupMarkerProps {
 /**
  * A throw-position marker, shown once a smoke spot is selected.
  *
- * Rendered as a flat stick person lying on the ground plane (the map is viewed
- * straight down, so an upright figure wouldn't read). Gray + translucent by
+ * Rendered as an upright 3D stick person standing on the ground. Light blue by
  * default, solid green when selected.
  */
 export function LineupMarker({
@@ -22,8 +22,11 @@ export function LineupMarker({
   onSelect,
   scale = 1,
 }: LineupMarkerProps) {
-  const color = selected ? '#52e07a' : '#7ec8f0'
-  const emissiveIntensity = selected ? 0.6 : 0.25
+  const hoveredLineupId = useViewer((s) => s.hoveredLineupId)
+  const hoverLineup = useViewer((s) => s.hoverLineup)
+  const active = selected || hoveredLineupId === lineup.id
+  const color = active ? '#52e07a' : '#7ec8f0'
+  const emissiveIntensity = active ? 0.6 : 0.25
 
   const material = (
     <meshStandardMaterial
@@ -37,19 +40,21 @@ export function LineupMarker({
 
   return (
     <group position={lineup.throwPosition} scale={scale}>
-      {/* Lay the figure flat on the XZ ground plane. */}
+      {/* Stand upright with feet on the ground. */}
       <group
         scale={2}
-        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, 1.6, 0]}
         onClick={(e) => {
           e.stopPropagation()
           onSelect()
         }}
         onPointerOver={(e) => {
           e.stopPropagation()
+          hoverLineup(lineup.id)
           document.body.style.cursor = 'pointer'
         }}
         onPointerOut={() => {
+          hoverLineup(null)
           document.body.style.cursor = 'auto'
         }}
       >
@@ -79,7 +84,7 @@ export function LineupMarker({
           {material}
         </mesh>
       </group>
-      <Html distanceFactor={40} position={[0, 1.4, 0]} center>
+      <Html distanceFactor={40} position={[0, 3.6, 0]} center>
         <div className="marker-label small">{lineup.name ?? lineup.technique}</div>
       </Html>
     </group>

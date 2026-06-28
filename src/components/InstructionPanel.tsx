@@ -11,6 +11,7 @@ export function InstructionPanel() {
   const selectedLineup = useViewer((s) => s.selectedLineup())
   const selectSpot = useViewer((s) => s.selectSpot)
   const selectLineup = useViewer((s) => s.selectLineup)
+  const hoverLineup = useViewer((s) => s.hoverLineup)
 
   if (!selectedSpot) {
     return (
@@ -38,7 +39,11 @@ export function InstructionPanel() {
           <ul className="lineup-list">
             {lineups.map((l) => (
               <li key={l.id}>
-                <button onClick={() => selectLineup(l.id)}>
+                <button
+                  onClick={() => selectLineup(l.id)}
+                  onMouseEnter={() => hoverLineup(l.id)}
+                  onMouseLeave={() => hoverLineup(null)}
+                >
                   <span>{l.name ?? l.technique}</span>
                   <span className="tag">{l.technique}</span>
                 </button>

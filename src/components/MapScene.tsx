@@ -1,6 +1,7 @@
-import { OrbitControls } from '@react-three/drei'
+import { Line, OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import type { ThreeEvent } from '@react-three/fiber'
+import type { Vec3 } from '../types/lineup'
 import { useViewer } from '../state/store'
 import { LineupMarker } from './LineupMarker'
 import { MapModel } from './MapModel'
@@ -30,6 +31,12 @@ export function MapScene() {
   const visibleLineups = selectedSpot
     ? selectedSpot.lineups.filter((l) => l.side === side)
     : []
+  const selectedLineup =
+    visibleLineups.find((l) => l.id === selectedLineupId) ?? null
+
+  // Lift trajectory endpoints slightly off the ground so the line doesn't
+  // z-fight with the radar plane.
+  const lift = ([x, y, z]: Vec3): Vec3 => [x, y + 8, z]
 
   const handleSurfaceClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
@@ -48,13 +55,30 @@ export function MapScene() {
 
       <MapModel onSurfaceClick={handleSurfaceClick} />
 
+      {/* Trajectory: dashed line from the selected throw spot to the smoke. */}
+      {selectedLineup && selectedSpot && (
+        <Line
+          points={[
+            lift(selectedLineup.throwPosition),
+            lift(selectedSpot.landingPosition),
+          ]}
+          color="#52e07a"
+          lineWidth={5}
+          dashed
+          dashSize={70}
+          gapSize={28}
+        />
+      )}
+
       {/* Smoke landing spots: collapse to just the selected one once drilled in. */}
       {(selectedSpot ? [selectedSpot] : visibleSpots).map((spot) => (
         <SmokeSpotMarker
           key={spot.id}
           spot={spot}
           selected={spot.id === selectedSpotId}
-          onSelect={() => selectSpot(spot.id)}
+          onSelect={() =>
+            selectSpot(spot.id === selectedSpotId ? null : spot.id)
+          }
           scale={markerScale}
         />
       ))}

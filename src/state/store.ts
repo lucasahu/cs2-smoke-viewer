@@ -10,6 +10,8 @@ interface ViewerState {
   selectedSpotId: string | null
   /** Currently selected lineup within the selected spot. */
   selectedLineupId: string | null
+  /** Lineup currently hovered (in the 3D scene or the list); highlights both. */
+  hoveredLineupId: string | null
   /** Author mode: click the scene to capture coordinates. */
   authorMode: boolean
   /** Last world position captured in author mode (raw click). */
@@ -25,6 +27,7 @@ interface ViewerState {
   setSide: (side: Side) => void
   selectSpot: (spotId: string | null) => void
   selectLineup: (lineupId: string | null) => void
+  hoverLineup: (lineupId: string | null) => void
   toggleAuthorMode: () => void
   capturePoint: (point: Vec3) => void
 }
@@ -34,6 +37,7 @@ export const useViewer = create<ViewerState>((set, get) => ({
   side: 'T',
   selectedSpotId: null,
   selectedLineupId: null,
+  hoveredLineupId: null,
   authorMode: false,
   capturedPoint: null,
 
@@ -56,6 +60,7 @@ export const useViewer = create<ViewerState>((set, get) => ({
   selectSpot: (spotId) =>
     set({ selectedSpotId: spotId, selectedLineupId: null }),
   selectLineup: (lineupId) => set({ selectedLineupId: lineupId }),
+  hoverLineup: (lineupId) => set({ hoveredLineupId: lineupId }),
   toggleAuthorMode: () =>
     set((s) => ({ authorMode: !s.authorMode, capturedPoint: null })),
   capturePoint: (point) => set({ capturedPoint: point }),
