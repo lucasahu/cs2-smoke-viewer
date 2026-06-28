@@ -10,7 +10,8 @@ import type {
 } from '../types/lineup'
 
 interface ViewerState {
-  mapId: string
+  /** Selected map id, or null while on the map-select landing screen. */
+  mapId: string | null
   /** Active side; only lineups for this side are shown. */
   side: Side
   /** Active grenade type; only spots for this grenade are shown. */
@@ -33,6 +34,7 @@ interface ViewerState {
 
   // actions
   setMap: (mapId: string) => void
+  clearMap: () => void
   setSide: (side: Side) => void
   setGrenade: (grenade: Grenade) => void
   selectSpot: (spotId: string | null) => void
@@ -43,7 +45,7 @@ interface ViewerState {
 }
 
 export const useViewer = create<ViewerState>((set, get) => ({
-  mapId: DEFAULT_MAP_ID,
+  mapId: null,
   side: 'T',
   grenade: 'smoke',
   selectedSpotId: null,
@@ -52,7 +54,7 @@ export const useViewer = create<ViewerState>((set, get) => ({
   authorMode: false,
   capturedPoint: null,
 
-  map: () => MAPS[get().mapId],
+  map: () => MAPS[get().mapId ?? DEFAULT_MAP_ID],
   selectedSpot: () => {
     const { selectedSpotId } = get()
     if (!selectedSpotId) return null
@@ -66,6 +68,8 @@ export const useViewer = create<ViewerState>((set, get) => ({
   },
   setMap: (mapId) =>
     set({ mapId, selectedSpotId: null, selectedLineupId: null }),
+  clearMap: () =>
+    set({ mapId: null, selectedSpotId: null, selectedLineupId: null }),
   setSide: (side) =>
     set({ side, selectedSpotId: null, selectedLineupId: null }),
   setGrenade: (grenade) =>
