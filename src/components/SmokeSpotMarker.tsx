@@ -1,5 +1,6 @@
+import { Billboard } from '@react-three/drei'
 import type { SmokeSpot } from '../types/lineup'
-import { GRENADE_COLOR, GrenadeIcon } from './MarkerIcons'
+import { GrenadeIcon } from './MarkerIcons'
 
 interface SmokeSpotMarkerProps {
   spot: SmokeSpot
@@ -16,8 +17,6 @@ export function SmokeSpotMarker({
   onSelect,
   scale = 1,
 }: SmokeSpotMarkerProps) {
-  const fill = selected ? '#52e07a' : GRENADE_COLOR[spot.grenade]
-
   return (
     <group position={spot.landingPosition} scale={scale}>
       {/* Invisible hit target. */}
@@ -38,7 +37,10 @@ export function SmokeSpotMarker({
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
 
-      <GrenadeIcon grenade={spot.grenade} fill={fill} />
+      {/* Always face the camera, even as the map is orbited. */}
+      <Billboard>
+        <GrenadeIcon grenade={spot.grenade} selected={selected} />
+      </Billboard>
     </group>
   )
 }

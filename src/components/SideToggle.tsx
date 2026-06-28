@@ -1,7 +1,11 @@
 import { useViewer } from '../state/store'
 import type { Side } from '../types/lineup'
+import { SegmentedToggle, type SegOption } from './SegmentedToggle'
 
-const SIDES: Side[] = ['T', 'CT']
+const SIDE_OPTIONS: SegOption[] = [
+  { id: 'T', label: 'T', color: '#e8a13a' },
+  { id: 'CT', label: 'CT', color: '#5a9fe0' },
+]
 
 /** Segmented T/CT switch that drives which lineups are shown. */
 export function SideToggle() {
@@ -9,18 +13,11 @@ export function SideToggle() {
   const setSide = useViewer((s) => s.setSide)
 
   return (
-    <div className="side-toggle" role="tablist" aria-label="Side">
-      {SIDES.map((s) => (
-        <button
-          key={s}
-          role="tab"
-          aria-selected={side === s}
-          className={`side-opt ${s.toLowerCase()} ${side === s ? 'active' : ''}`}
-          onClick={() => setSide(s)}
-        >
-          {s}
-        </button>
-      ))}
-    </div>
+    <SegmentedToggle
+      ariaLabel="Side"
+      options={SIDE_OPTIONS}
+      value={side}
+      onChange={(id) => setSide(id as Side)}
+    />
   )
 }

@@ -1,4 +1,4 @@
-import { Html } from '@react-three/drei'
+import { Billboard, Html } from '@react-three/drei'
 import { useViewer } from '../state/store'
 import type { Lineup } from '../types/lineup'
 
@@ -13,7 +13,7 @@ interface LineupMarkerProps {
 /**
  * A throw-position marker, shown once a smoke spot is selected.
  *
- * Rendered as an upright 3D stick person standing on the ground. Light blue by
+ * Rendered as a 3D stick person that always faces the camera. Light blue by
  * default, solid green when selected.
  */
 export function LineupMarker({
@@ -40,10 +40,10 @@ export function LineupMarker({
 
   return (
     <group position={lineup.throwPosition} scale={scale}>
-      {/* Stand upright with feet on the ground. */}
+      {/* Float above the throw point and always face the camera. */}
+      <Billboard position={[0, 1.6, 0]}>
       <group
         scale={2}
-        position={[0, 1.6, 0]}
         onClick={(e) => {
           e.stopPropagation()
           onSelect()
@@ -84,6 +84,7 @@ export function LineupMarker({
           {material}
         </mesh>
       </group>
+      </Billboard>
       <Html distanceFactor={40} position={[0, 3.6, 0]} center>
         <div className="marker-label small">{lineup.name ?? lineup.technique}</div>
       </Html>

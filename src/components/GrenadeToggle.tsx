@@ -1,11 +1,12 @@
 import { useViewer } from '../state/store'
 import type { Grenade } from '../types/lineup'
+import { SegmentedToggle, type SegOption } from './SegmentedToggle'
 
-const GRENADES: { id: Grenade; label: string }[] = [
-  { id: 'smoke', label: 'Smoke' },
-  { id: 'molly', label: 'Molly' },
-  { id: 'flash', label: 'Flash' },
-  { id: 'he', label: 'HE' },
+const GRENADE_OPTIONS: SegOption[] = [
+  { id: 'smoke', label: 'Smoke', color: '#c7cdd6' },
+  { id: 'molly', label: 'Molly', color: '#e0683a' },
+  { id: 'flash', label: 'Flash', color: '#e8d44a' },
+  { id: 'he', label: 'HE', color: '#6fae54' },
 ]
 
 /** Segmented switch picking which grenade type's spots are shown. */
@@ -14,18 +15,11 @@ export function GrenadeToggle() {
   const setGrenade = useViewer((s) => s.setGrenade)
 
   return (
-    <div className="nade-toggle" role="tablist" aria-label="Grenade">
-      {GRENADES.map(({ id, label }) => (
-        <button
-          key={id}
-          role="tab"
-          aria-selected={grenade === id}
-          className={`nade-opt ${id} ${grenade === id ? 'active' : ''}`}
-          onClick={() => setGrenade(id)}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
+    <SegmentedToggle
+      ariaLabel="Grenade"
+      options={GRENADE_OPTIONS}
+      value={grenade}
+      onChange={(id) => setGrenade(id as Grenade)}
+    />
   )
 }

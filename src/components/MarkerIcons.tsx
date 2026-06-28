@@ -1,5 +1,5 @@
 import { useMemo, type ReactElement } from 'react'
-import { BackSide, Shape } from 'three'
+import { BackSide, Path, Shape } from 'three'
 import type { Grenade } from '../types/lineup'
 
 const OUTLINE_COLOR = '#2b3340'
@@ -7,16 +7,18 @@ const OUTLINE = 1.12
 
 type Vec3 = [number, number, number]
 
-/** Default (unselected) themed colour per grenade type. */
-export const GRENADE_COLOR: Record<Grenade, string> = {
-  smoke: '#f3f6fb',
-  molly: '#e8743a',
-  flash: '#cfe4f5',
-  he: '#d9533c',
-}
+/** Default (unselected) cloud colour; the other icons carry their own palettes. */
+const SMOKE_COLOR = '#f3f6fb'
+const SELECTED = '#52e07a'
+
+// Green shades reused when a multi-colour icon is selected (dark -> light).
+const GREEN3 = ['#2f8f4e', '#46b06a', '#86e0a6']
+
+// ---------------------------------------------------------------------------
+// Shared building blocks
+// ---------------------------------------------------------------------------
 
 interface OutlinedProps {
-  /** A geometry element, e.g. <sphereGeometry args={[1, 16, 16]} />. */
   geo: ReactElement
   fill: string
   position?: Vec3
@@ -24,7 +26,7 @@ interface OutlinedProps {
   scale?: number | Vec3
 }
 
-/** A toon-shaded body with a dark inverted-hull outline behind it. */
+/** A toon-shaded body with a dark inverted-hull outline (used by the cloud). */
 function Outlined({ geo, fill, position, rotation, scale = 1 }: OutlinedProps) {
   const outlineScale: number | Vec3 = Array.isArray(scale)
     ? [scale[0] * OUTLINE, scale[1] * OUTLINE, scale[2] * OUTLINE]
@@ -43,15 +45,33 @@ function Outlined({ geo, fill, position, rotation, scale = 1 }: OutlinedProps) {
   )
 }
 
-/** A flat dark detail bit (no outline), e.g. an iris. */
-function Detail({ geo, position }: { geo: ReactElement; position?: Vec3 }) {
+interface LayerProps {
+  geo: ReactElement
+  color: string
+  position?: Vec3
+  rotation?: Vec3
+  scale?: number | Vec3
+}
+
+/** A single smooth-shaded colour layer (no outline); icons stack these. */
+function Layer({ geo, color, position, rotation, scale }: LayerProps) {
   return (
-    <mesh position={position}>
+    <mesh position={position} rotation={rotation} scale={scale}>
       {geo}
-      <meshToonMaterial color={OUTLINE_COLOR} />
+      <meshStandardMaterial
+        color={color}
+        emissive={color}
+        emissiveIntensity={0.18}
+        roughness={0.55}
+        metalness={0}
+      />
     </mesh>
   )
 }
+
+// ---------------------------------------------------------------------------
+// Smoke — cartoon cloud (unchanged)
+// ---------------------------------------------------------------------------
 
 const CLOUD_BUMPS: [number, number, number, number][] = [
   [0, 0, 0, 1.25],
@@ -63,7 +83,8 @@ const CLOUD_BUMPS: [number, number, number, number][] = [
   [-0.2, 0.55, 0.05, 0.75],
 ]
 
-function CloudIcon({ fill }: { fill: string }) {
+function CloudIcon({ selected }: { selected: boolean }) {
+  const fill = selected ? SELECTED : SMOKE_COLOR
   return (
     <>
       {CLOUD_BUMPS.map(([x, y, z, r], i) => (
@@ -78,11 +99,15 @@ function CloudIcon({ fill }: { fill: string }) {
   )
 }
 
+// ---------------------------------------------------------------------------
+// Molly — layered flame (red -> orange -> yellow)
+// ---------------------------------------------------------------------------
+
 const FLAME_EXTRUDE = {
-  depth: 0.7,
+  depth: 0.5,
   bevelEnabled: true,
-  bevelThickness: 0.28,
-  bevelSize: 0.28,
+  bevelThickness: 0.18,
+  bevelSize: 0.18,
   bevelSegments: 4,
   steps: 1,
   curveSegments: 24,
@@ -92,96 +117,143 @@ const FLAME_EXTRUDE = {
 function makeFlameShape(): Shape {
   const s = new Shape()
   s.moveTo(0, -1.6)
-  // right side, bulging out then curling in
   s.bezierCurveTo(1.0, -1.6, 1.3, -0.8, 1.18, -0.1)
   s.bezierCurveTo(1.06, 0.5, 0.45, 0.6, 0.62, 1.05)
   s.bezierCurveTo(0.72, 1.45, 0.28, 1.55, 0.0, 1.95)
-  // left side, mirrored
   s.bezierCurveTo(-0.28, 1.55, -0.72, 1.45, -0.62, 1.05)
   s.bezierCurveTo(-0.45, 0.6, -1.06, 0.5, -1.18, -0.1)
   s.bezierCurveTo(-1.3, -0.8, -1.0, -1.6, 0, -1.6)
   return s
 }
 
-function FlameIcon({ fill }: { fill: string }) {
+function FlameIcon({ selected }: { selected: boolean }) {
   const shape = useMemo(makeFlameShape, [])
+  const c = selected ? GREEN3 : ['#c0492f', '#d9772e', '#e8c83f']
+  const geo = <extrudeGeometry args={[shape, FLAME_EXTRUDE]} />
   return (
-    // Laid flat so the silhouette faces the straight-down camera.
-    <Outlined
-      geo={<extrudeGeometry args={[shape, FLAME_EXTRUDE]} />}
-      fill={fill}
-      rotation={[-Math.PI / 2, 0, 0]}
-      scale={0.95}
-    />
+    <group scale={0.95}>
+      <Layer geo={geo} color={c[0]} />
+      <Layer geo={geo} color={c[1]} position={[0, -0.4, 0.32]} scale={0.62} />
+      <Layer geo={geo} color={c[2]} position={[0, -0.6, 0.64]} scale={0.38} />
+    </group>
   )
 }
 
-function EyeIcon({ fill }: { fill: string }) {
+// ---------------------------------------------------------------------------
+// Flash — eye (dark almond lens + white iris ring)
+// ---------------------------------------------------------------------------
+
+const EYE_EXTRUDE = {
+  depth: 0.5,
+  bevelEnabled: true,
+  bevelThickness: 0.16,
+  bevelSize: 0.16,
+  bevelSegments: 4,
+  steps: 1,
+  curveSegments: 24,
+}
+
+/**
+ * A hollow almond eyelid: a pointed lens silhouette with a smaller almond hole
+ * cut out, so the gap inside reads as empty (eyelid -> transparent ring -> iris).
+ */
+function makeEyelidShape(): Shape {
+  const s = new Shape()
+  s.moveTo(-1.2, 0)
+  s.quadraticCurveTo(0, 0.74, 1.2, 0)
+  s.quadraticCurveTo(0, -0.74, -1.2, 0)
+
+  const hole = new Path()
+  hole.moveTo(-0.74, 0)
+  hole.quadraticCurveTo(0, 0.58, 0.74, 0)
+  hole.quadraticCurveTo(0, -0.58, -0.74, 0)
+  s.holes.push(hole)
+  return s
+}
+
+function EyeIcon({ selected }: { selected: boolean }) {
+  const eyelid = useMemo(makeEyelidShape, [])
+  const white = selected ? SELECTED : '#f4f4f4'
   return (
-    <>
-      {/* Wide almond eyeball */}
+    <group scale={1.1}>
+      {/* Hollow eyelid: solid band with an open (transparent) centre */}
+      <Outlined geo={<extrudeGeometry args={[eyelid, EYE_EXTRUDE]} />} fill={white} />
+      {/* White iris dot floating in the open centre */}
       <Outlined
-        geo={<sphereGeometry args={[1, 24, 24]} />}
-        fill={fill}
-        scale={[1.5, 0.65, 1.05]}
+        geo={<sphereGeometry args={[0.26, 18, 18]} />}
+        fill={white}
+        position={[0, 0, 0.4]}
       />
-      {/* Iris / pupil on top, facing the camera */}
-      <Detail
-        geo={<sphereGeometry args={[0.46, 20, 20]} />}
-        position={[0, 0.45, 0]}
-      />
-      {/* Cartoon glint */}
-      <mesh position={[0.2, 0.62, 0.15]}>
-        <sphereGeometry args={[0.12, 12, 12]} />
-        <meshBasicMaterial color="#ffffff" />
-      </mesh>
-    </>
+    </group>
   )
 }
 
-function ExplosionIcon({ fill }: { fill: string }) {
-  const spikes = 9
+// ---------------------------------------------------------------------------
+// HE — jagged explosion star (two-tone)
+// ---------------------------------------------------------------------------
+
+const STAR_EXTRUDE = {
+  depth: 0.4,
+  bevelEnabled: true,
+  bevelThickness: 0.08,
+  bevelSize: 0.08,
+  bevelSegments: 2,
+  steps: 1,
+  curveSegments: 1,
+}
+
+/** A spiky star with deterministic per-point jitter for an explosive look. */
+function makeStar(points: number, rOuter: number, rInner: number, seed = 0): Shape {
+  const s = new Shape()
+  const n = points * 2
+  for (let i = 0; i < n; i++) {
+    const ang = (i / n) * Math.PI * 2 - Math.PI / 2
+    const jitter = 0.82 + 0.34 * (((i + seed) * 0.61803398875) % 1)
+    const r = (i % 2 === 0 ? rOuter : rInner) * jitter
+    const x = Math.cos(ang) * r
+    const y = Math.sin(ang) * r
+    if (i === 0) s.moveTo(x, y)
+    else s.lineTo(x, y)
+  }
+  s.closePath()
+  return s
+}
+
+function ExplosionIcon({ selected }: { selected: boolean }) {
+  const outer = useMemo(() => makeStar(11, 1.7, 0.78, 1), [])
+  const inner = useMemo(() => makeStar(11, 1.12, 0.5, 4), [])
+  const c = selected ? [GREEN3[0], GREEN3[2]] : ['#b5611f', '#e8c33f']
   return (
-    <>
-      {/* Core */}
-      <Outlined geo={<sphereGeometry args={[0.95, 20, 20]} />} fill={fill} />
-      {/* Radial spikes alternating in length for a jagged starburst */}
-      {Array.from({ length: spikes }, (_, i) => {
-        const theta = (i / spikes) * Math.PI * 2
-        const len = i % 2 === 0 ? 1.7 : 1.1
-        const dist = 0.4 + len / 2
-        return (
-          <group key={i} rotation={[0, theta, 0]}>
-            <Outlined
-              geo={<coneGeometry args={[0.45, len, 10]} />}
-              fill={fill}
-              position={[dist, 0, 0]}
-              rotation={[0, 0, -Math.PI / 2]}
-            />
-          </group>
-        )
-      })}
-    </>
+    <group scale={0.95}>
+      <Layer geo={<extrudeGeometry args={[outer, STAR_EXTRUDE]} />} color={c[0]} />
+      <Layer
+        geo={<extrudeGeometry args={[inner, STAR_EXTRUDE]} />}
+        color={c[1]}
+        position={[0, 0, 0.3]}
+      />
+    </group>
   )
 }
+
+// ---------------------------------------------------------------------------
 
 /** Picks the cartoon 3D icon for a grenade type. */
 export function GrenadeIcon({
   grenade,
-  fill,
+  selected,
 }: {
   grenade: Grenade
-  fill: string
+  selected: boolean
 }) {
   switch (grenade) {
     case 'molly':
-      return <FlameIcon fill={fill} />
+      return <FlameIcon selected={selected} />
     case 'flash':
-      return <EyeIcon fill={fill} />
+      return <EyeIcon selected={selected} />
     case 'he':
-      return <ExplosionIcon fill={fill} />
+      return <ExplosionIcon selected={selected} />
     case 'smoke':
     default:
-      return <CloudIcon fill={fill} />
+      return <CloudIcon selected={selected} />
   }
 }
