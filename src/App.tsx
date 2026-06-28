@@ -1,4 +1,5 @@
 import { AuthorPanel } from './authoring/AuthorPanel'
+import { GrenadeToggle } from './components/GrenadeToggle'
 import { InstructionPanel } from './components/InstructionPanel'
 import { MapScene } from './components/MapScene'
 import { SideToggle } from './components/SideToggle'
@@ -10,6 +11,7 @@ export default function App() {
         <div className="topbar-left">
           <span className="brand">CS2 Smoke Viewer</span>
           <SideToggle />
+          <GrenadeToggle />
         </div>
         <AuthorPanel />
       </header>

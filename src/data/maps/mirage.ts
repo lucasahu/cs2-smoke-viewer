@@ -33,6 +33,7 @@ export const mirage: GameMap = {
     {
       id: "window",
       name: "Window",
+      grenade: "smoke",
       area: "Mid",
       landingPosition: [-1160, 0, 615],
       lineups: [
@@ -64,9 +65,70 @@ export const mirage: GameMap = {
     {
       id: "a-stairs",
       name: "Stairs",
+      grenade: "smoke",
       area: "A",
       landingPosition: [-200, 0, 700],
       lineups: [],
+    },
+    {
+      id: "short-molly",
+      name: "Short",
+      grenade: "molly",
+      area: "Mid",
+      landingPosition: [-300, 0, 300],
+      lineups: [
+        {
+          id: "short-molly-from-tspawn",
+          side: "T",
+          name: "From T spawn",
+          throwPosition: [900, 0, -200],
+          technique: "standing",
+          input: "left",
+          instructionImage: "mirage/short-molly-from-tspawn.jpg",
+          instructionText: "Mock lineup — aim as shown and throw.",
+          tags: ["default"],
+        },
+      ],
+    },
+    {
+      id: "a-flash",
+      name: "A Site",
+      grenade: "flash",
+      area: "A",
+      landingPosition: [-700, 0, 900],
+      lineups: [
+        {
+          id: "a-flash-from-ramp",
+          side: "T",
+          name: "Pop flash from ramp",
+          throwPosition: [600, 0, 200],
+          technique: "run-jumpthrow",
+          input: "left",
+          instructionImage: "mirage/a-flash-from-ramp.jpg",
+          instructionText: "Mock lineup — run, jumpthrow over the wall.",
+          tags: ["default", "fast"],
+        },
+      ],
+    },
+    {
+      id: "window-he",
+      name: "Window",
+      grenade: "he",
+      area: "Mid",
+      landingPosition: [-1100, 0, 650],
+      lineups: [
+        {
+          id: "window-he-from-tspawn",
+          side: "T",
+          name: "From T spawn",
+          throwPosition: [1300, 0, 80],
+          technique: "jumpthrow",
+          input: "left",
+          instructionImage: "mirage/window-he-from-tspawn.jpg",
+          instructionText: "Mock lineup — jumpthrow on the marked pixel.",
+          tags: ["default"],
+        },
+      ],
     },
   ],
 };

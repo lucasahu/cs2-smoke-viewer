@@ -1,5 +1,5 @@
-import { BackSide } from 'three'
 import type { SmokeSpot } from '../types/lineup'
+import { GRENADE_COLOR, GrenadeIcon } from './MarkerIcons'
 
 interface SmokeSpotMarkerProps {
   spot: SmokeSpot
@@ -9,31 +9,14 @@ interface SmokeSpotMarkerProps {
   scale?: number
 }
 
-/**
- * Lumps making up the cartoon cloud, as [x, y, z, radius] in local space.
- * Spread mostly across X/Z (the cloud is seen from above) with a couple of
- * higher lumps so it puffs up into 3D.
- */
-const BUMPS: [number, number, number, number][] = [
-  [0, 0, 0, 1.25],
-  [-1.45, -0.1, 0.1, 0.85],
-  [1.45, -0.1, 0.1, 0.85],
-  [-0.7, 0.1, -0.55, 0.85],
-  [0.75, 0.1, -0.5, 0.9],
-  [0, -0.1, 0.5, 0.95],
-  [-0.2, 0.55, 0.05, 0.75],
-]
-
-const OUTLINE = 1.12 // dark inverted-hull shell scale
-
-/** A clickable smoke landing target, drawn as a 3D cartoon cloud. */
+/** A clickable grenade spot, drawn as a cartoon 3D icon for its grenade type. */
 export function SmokeSpotMarker({
   spot,
   selected,
   onSelect,
   scale = 1,
 }: SmokeSpotMarkerProps) {
-  const fill = selected ? '#52e07a' : '#f3f6fb'
+  const fill = selected ? '#52e07a' : GRENADE_COLOR[spot.grenade]
 
   return (
     <group position={spot.landingPosition} scale={scale}>
@@ -55,21 +38,7 @@ export function SmokeSpotMarker({
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
 
-      {/* Dark outline: back-face shell slightly larger than each lump. */}
-      {BUMPS.map(([x, y, z, r], i) => (
-        <mesh key={`o${i}`} position={[x, y, z]} scale={OUTLINE}>
-          <sphereGeometry args={[r, 16, 16]} />
-          <meshBasicMaterial color="#2b3340" side={BackSide} />
-        </mesh>
-      ))}
-
-      {/* Solid toon-shaded body. */}
-      {BUMPS.map(([x, y, z, r], i) => (
-        <mesh key={`f${i}`} position={[x, y, z]}>
-          <sphereGeometry args={[r, 16, 16]} />
-          <meshToonMaterial color={fill} />
-        </mesh>
-      ))}
+      <GrenadeIcon grenade={spot.grenade} fill={fill} />
     </group>
   )
 }

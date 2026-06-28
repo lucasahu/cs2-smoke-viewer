@@ -79,6 +79,53 @@ body,
   color: #06121f;
 }
 
+/* Grenade type switch (reuses the side-toggle pill look) */
+.nade-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: #0b0e13;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.nade-opt {
+  min-width: 52px;
+  padding: 5px 14px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.nade-opt:hover {
+  color: var(--text);
+}
+
+.nade-opt.active.smoke {
+  background: #c7cdd6; /* smoke gray-white */
+  color: #161b22;
+}
+
+.nade-opt.active.molly {
+  background: #e0683a; /* fire orange */
+  color: #1f0a03;
+}
+
+.nade-opt.active.flash {
+  background: #e8d44a; /* flash yellow */
+  color: #1f1c05;
+}
+
+.nade-opt.active.he {
+  background: #6fae54; /* HE green */
+  color: #07140a;
+}
+
 .brand {
   font-weight: 600;
   letter-spacing: 0.02em;

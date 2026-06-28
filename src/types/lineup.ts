@@ -27,6 +27,9 @@ export type ThrowInput =
 /** Which side executes the lineup (drives the T/CT filter). */
 export type Side = 'T' | 'CT'
 
+/** Grenade type a spot is for (drives the smoke/molly/flash/he filter). */
+export type Grenade = 'smoke' | 'molly' | 'flash' | 'he'
+
 /** A single way to land a given smoke: where you stand and how you throw. */
 export interface Lineup {
   id: string
@@ -53,7 +56,9 @@ export interface SmokeSpot {
   id: string
   /** Display name, e.g. "CT", "Window", "Stairs". */
   name: string
-  /** Where the smoke comes to rest in the world. */
+  /** Grenade type this spot is for; drives the smoke/molly/flash/he filter. */
+  grenade: Grenade
+  /** Where the grenade comes to rest / detonates in the world. */
   landingPosition: Vec3
   /** Optional callout area / site grouping, e.g. "A", "B", "Mid". */
   area?: string

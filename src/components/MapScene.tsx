@@ -13,6 +13,7 @@ const round = (n: number) => Math.round(n * 100) / 100
 export function MapScene() {
   const map = useViewer((s) => s.map())
   const side = useViewer((s) => s.side)
+  const grenade = useViewer((s) => s.grenade)
   const selectedSpotId = useViewer((s) => s.selectedSpotId)
   const selectedLineupId = useViewer((s) => s.selectedLineupId)
   const authorMode = useViewer((s) => s.authorMode)
@@ -25,8 +26,8 @@ export function MapScene() {
 
   // Only show spots that have a lineup on the active side, and only that
   // side's lineups within the selected spot.
-  const visibleSpots = map.spots.filter((s) =>
-    s.lineups.some((l) => l.side === side),
+  const visibleSpots = map.spots.filter(
+    (s) => s.grenade === grenade && s.lineups.some((l) => l.side === side),
   )
   const visibleLineups = selectedSpot
     ? selectedSpot.lineups.filter((l) => l.side === side)

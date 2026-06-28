@@ -1,11 +1,20 @@
 import { create } from 'zustand'
 import { DEFAULT_MAP_ID, MAPS } from '../data/maps'
-import type { GameMap, Lineup, Side, SmokeSpot, Vec3 } from '../types/lineup'
+import type {
+  GameMap,
+  Grenade,
+  Lineup,
+  Side,
+  SmokeSpot,
+  Vec3,
+} from '../types/lineup'
 
 interface ViewerState {
   mapId: string
   /** Active side; only lineups for this side are shown. */
   side: Side
+  /** Active grenade type; only spots for this grenade are shown. */
+  grenade: Grenade
   /** Currently selected smoke landing spot. */
   selectedSpotId: string | null
   /** Currently selected lineup within the selected spot. */
@@ -25,6 +34,7 @@ interface ViewerState {
   // actions
   setMap: (mapId: string) => void
   setSide: (side: Side) => void
+  setGrenade: (grenade: Grenade) => void
   selectSpot: (spotId: string | null) => void
   selectLineup: (lineupId: string | null) => void
   hoverLineup: (lineupId: string | null) => void
@@ -35,6 +45,7 @@ interface ViewerState {
 export const useViewer = create<ViewerState>((set, get) => ({
   mapId: DEFAULT_MAP_ID,
   side: 'T',
+  grenade: 'smoke',
   selectedSpotId: null,
   selectedLineupId: null,
   hoveredLineupId: null,
@@ -57,6 +68,8 @@ export const useViewer = create<ViewerState>((set, get) => ({
     set({ mapId, selectedSpotId: null, selectedLineupId: null }),
   setSide: (side) =>
     set({ side, selectedSpotId: null, selectedLineupId: null }),
+  setGrenade: (grenade) =>
+    set({ grenade, selectedSpotId: null, selectedLineupId: null }),
   selectSpot: (spotId) =>
     set({ selectedSpotId: spotId, selectedLineupId: null }),
   selectLineup: (lineupId) => set({ selectedLineupId: lineupId }),
