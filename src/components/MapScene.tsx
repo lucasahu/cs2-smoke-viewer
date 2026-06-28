@@ -49,6 +49,10 @@ export function MapScene() {
   return (
     <Canvas
       camera={{ position: map.defaultCamera.position, fov: 50, near: 1, far: 20000 }}
+      // Track the container continuously and keep the last frame during resize
+      // so shrinking/growing the panel doesn't flash the map blank.
+      resize={{ debounce: 0, scroll: false }}
+      gl={{ preserveDrawingBuffer: true }}
     >
       <color attach="background" args={['#0e1116']} />
       <ambientLight intensity={0.6} />

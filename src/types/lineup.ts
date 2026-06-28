@@ -13,6 +13,7 @@ export type Vec3 = [x: number, y: number, z: number]
 export type ThrowTechnique =
   | 'standing'
   | 'jumpthrow'
+  | 'W + jumpthrow'
   | 'running'
   | 'run-jumpthrow'
   | 'walk'

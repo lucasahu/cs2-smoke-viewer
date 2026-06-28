@@ -29,7 +29,7 @@ export function InstructionPanel() {
   if (!selectedLineup) {
     return (
       <aside className="panel">
-        <button className="back" onClick={() => selectSpot(null)}>
+        <button className="back-maps" onClick={() => selectSpot(null)}>
           ← All spots
         </button>
         <h2>{selectedSpot.name}</h2>
@@ -56,8 +56,8 @@ export function InstructionPanel() {
   }
 
   return (
-    <aside className="panel">
-      <button className="back" onClick={() => selectLineup(null)}>
+    <aside className="panel wide">
+      <button className="back-maps" onClick={() => selectLineup(null)}>
         ← {selectedSpot.name} lineups
       </button>
       <h2>{selectedLineup.name ?? selectedLineup.technique}</h2>

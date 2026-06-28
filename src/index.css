@@ -237,15 +237,26 @@ body,
 
 .viewport {
   flex: 1;
+  min-width: 0; /* let the map shrink as the panel grows, instead of overflowing */
   position: relative;
 }
 
 .panel {
   width: 340px;
+  flex: 0 0 auto; /* hold the panel width; the viewport absorbs the rest */
   border-left: 1px solid var(--border);
   background: var(--panel);
   padding: 16px;
   overflow-y: auto;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: width;
+}
+
+/* Lineup detail view: grow to ~half the screen. */
+.panel.wide {
+  width: 50vw;
+  min-width: 460px;
+  max-width: 900px;
 }
 
 .panel h2 {
@@ -260,15 +271,6 @@ body,
 
 .hint.dim {
   opacity: 0.6;
-}
-
-.back {
-  background: none;
-  border: none;
-  color: var(--accent);
-  cursor: pointer;
-  padding: 0;
-  font-size: 13px;
 }
 
 .lineup-list {
