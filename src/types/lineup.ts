@@ -40,8 +40,6 @@ export interface Lineup {
   facing?: Vec3
   technique: ThrowTechnique
   input: ThrowInput
-  /** Requires a jumpthrow bind / can't be done by hand. */
-  needsBind?: boolean
   /** Path under /public/instructions, e.g. "mirage/ct-smoke-from-tspawn.jpg". */
   instructionImage: string
   /** Human-readable step-by-step / aim description. */

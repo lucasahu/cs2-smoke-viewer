@@ -182,11 +182,6 @@ body,
   padding: 3px 8px;
 }
 
-.tag.warn {
-  color: #ffd166;
-  border-color: #5a4a1f;
-}
-
 /* 3D marker labels (rendered via drei <Html>) */
 .marker-label {
   background: rgba(0, 0, 0, 0.7);

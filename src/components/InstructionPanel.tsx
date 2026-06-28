@@ -67,7 +67,6 @@ export function InstructionPanel() {
       <div className="badges">
         <span className="tag">{selectedLineup.technique}</span>
         <span className="tag">{selectedLineup.input} click</span>
-        {selectedLineup.needsBind && <span className="tag warn">needs bind</span>}
       </div>
       <p className="instruction-text">{selectedLineup.instructionText}</p>
     </aside>

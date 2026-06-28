@@ -1,4 +1,4 @@
-import type { GameMap } from '../../types/lineup'
+import type { GameMap } from "../../types/lineup";
 
 /**
  * Mirage — currently backed by the 2D radar overview (real game coordinates).
@@ -12,11 +12,11 @@ import type { GameMap } from '../../types/lineup'
  * Spot/throw positions below are placeholders — recapture them with author mode.
  */
 export const mirage: GameMap = {
-  id: 'mirage',
-  name: 'Mirage',
+  id: "mirage",
+  name: "Mirage",
   // modelPath: 'mirage.glb', // <- uncomment after decompiling from the .vpk
   radar: {
-    image: 'mirage.png',
+    image: "mirage.png",
     // From CS2 overview file (data/radar_info/de_mirage.txt)
     posX: -3230,
     posY: 1713,
@@ -31,32 +31,31 @@ export const mirage: GameMap = {
   },
   spots: [
     {
-      id: 'a-ct',
-      name: 'CT',
-      area: 'A',
-      landingPosition: [-900, 0, 500],
+      id: "window",
+      name: "Window",
+      area: "Mid",
+      landingPosition: [-1160, 0, 615],
       lineups: [
         {
-          id: 'a-ct-from-tramp',
-          side: 'T',
-          name: 'From T ramp',
-          throwPosition: [-300, 0, 1400],
-          technique: 'jumpthrow',
-          input: 'left',
-          needsBind: true,
-          instructionImage: 'mirage/a-ct-from-tramp.jpg',
+          id: "window-from-tspawn",
+          side: "T",
+          name: "From T spawn stairs",
+          throwPosition: [1450, 0, 50],
+          technique: "jumpthrow",
+          input: "left",
+          instructionImage: "mirage/a-ct-from-tramp.jpg",
           instructionText:
-            'Stand on T ramp, line your crosshair on the antenna tip, jumpthrow.',
-          tags: ['default', 'fast'],
+            "Stand on T ramp, line your crosshair on the antenna tip, jumpthrow.",
+          tags: ["default", "fast"],
         },
       ],
     },
     {
-      id: 'a-stairs',
-      name: 'Stairs',
-      area: 'A',
+      id: "a-stairs",
+      name: "Stairs",
+      area: "A",
       landingPosition: [-200, 0, 700],
       lineups: [],
     },
   ],
-}
+};
